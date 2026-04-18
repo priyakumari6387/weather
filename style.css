@@ -1,7 +1,9 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+body{
+font-family: Arial, sans-serif;
+text-align:center;
+background: linear-gradient(135deg,#667eea,#764ba2);
+color:white;
+margin-top:80px;
 }
 
 
@@ -91,20 +93,18 @@ body {
     text-align: center;
 }
 
-.app-title {
-    color: #fff;
-    font-size: 28px;
-    margin-bottom: 24px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
+.search-box button{
+padding:10px 20px;
+margin-left:10px;
+border:none;
+border-radius:5px;
+background:#ff6b6b;
+color:white;
+cursor:pointer;
 }
 
-/* Search Box */
-.search-box {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 24px;
+#weather-card{
+margin-top:40px;
 }
 
 .search-box input {
