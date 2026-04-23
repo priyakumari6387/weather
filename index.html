@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<<<<<<< HEAD
-=======
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,41 +16,54 @@
     <canvas id="effectsCanvas"></canvas>
     <div class="container">
       <h1 class="app-title">Weather Dashboard</h1>
->>>>>>> fbcdbc2 (update UI and background)
+      <div class="search-box">
+        <input type="text" id="city" placeholder="Enter city name" />
+        <button onclick="getWeather()">Search</button>
+      </div>
 
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Weather Dashboard</title>
-<link rel="stylesheet" href="style.css">
-</head>
+      <!-- Current Weather -->
+      <div id="current-weather" class="current-weather hidden">
+        <div class="current-main">
+          <div>
+            <h2 id="city-name">--</h2>
+            <div id="weather-condition" class="condition">--</div>
+            <div id="temp" class="current-temp">--°C</div>
+            <button id="unit-toggle" onclick="toggleUnit()">Switch to °F</button>
+          </div>
+          <img id="weather-icon" class="weather-icon" src="" alt="Weather icon" />
+        </div>
+        <div class="current-details">
+          <div class="detail-item">
+            <span class="detail-label">Feels Like</span>
+            <span id="feels-like" class="detail-value">--°C</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Humidity</span>
+            <span id="humidity" class="detail-value">--%</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Wind</span>
+            <span id="wind" class="detail-value">-- km/h</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Wind Dir</span>
+            <span id="wind-dir" class="detail-value">--</span>
+          </div>
+        </div>
+      </div>
 
-<body>
-
-<h1>Weather Dashboard</h1>
-
-<div class="search-box">
-<input type="text" id="city" placeholder="Enter city name">
-<button onclick="getWeather()">Search</button>
-</div>
-
-<<<<<<< HEAD
-<div id="weather-card">
-<h2 id="name">City</h2>
-<p id="temp">-- °C</p>
-<p id="condition"></p>
-</div>
-=======
       <!-- 5-Day Forecast -->
-      
       <div id="forecast-section" class="forecast-section hidden">
         <h2 class="forecast-title">5-Day Forecast</h2>
         <div id="forecast-cards" class="forecast-cards"></div>
       </div>
+      
+      <div id="loader" class="loader hidden"></div>
+      <div id="error-msg" class="error-msg hidden"></div>
     </div>
->>>>>>> fbcdbc2 (update UI and background)
 
-<script src="script.js"></script>
-
-</body>
+    <!-- Use config if present, or we use standard script.js logic -->
+    <script src="config.js" onerror="console.warn('config.js not found, fallback to inline api key if present')"></script>
+    <script src="script.js"></script>
+  </body>
 </html>

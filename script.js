@@ -1,4 +1,4 @@
-const apiKey = config.WEATHER_API_KEY;
+const apiKey = typeof config !== 'undefined' && config.WEATHER_API_KEY ? config.WEATHER_API_KEY : "f0133e94263d448c963164120261904";
 let isRaining = false;
 let isCelsius = true;
 let lastWeatherData = null;
@@ -11,11 +11,13 @@ const bgVideos = [
 ];
 
 const canvasFX = document.getElementById("effectsCanvas");
-const ctxFX = canvasFX.getContext("2d");
+const ctxFX = canvasFX ? canvasFX.getContext("2d") : null;
 let rainDrops = [];
 
 function getWeather() {
-    const city = document.getElementById("city").value.trim();
+    const cityInput = document.getElementById("city");
+    if (!cityInput) return;
+    const city = cityInput.value.trim();
 
     if (!city) {
         showError("Please enter a city name.");
@@ -26,7 +28,7 @@ function getWeather() {
     hideResults();
     hideError();
 
-    const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=5`;
+    const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(city)}&days=5`;
 
     fetch(url)
         .then((res) => {
@@ -54,43 +56,45 @@ function getWeather() {
         });
 }
 
-<<<<<<< HEAD
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city},IN&appid=${apiKey}&units=metric`;
-
-=======
 function displayCurrentWeather(data) {
     const { current, location } = data;
     const temp = isCelsius ? current.temp_c : current.temp_f;
     const feels = isCelsius ? current.feelslike_c : current.feelslike_f;
     const wind = isCelsius ? `${current.wind_kph} km/h` : `${current.wind_mph} mph`;
 
-    document.getElementById("city-name").textContent = `${location.name}, ${location.country}`;
-    document.getElementById("weather-condition").textContent = current.condition.text;
-    document.getElementById("weather-icon").src = `https:${current.condition.icon}`;
-    document.getElementById("temp").textContent = `${Math.round(temp)}°${isCelsius ? "C" : "F"}`;
-    document.getElementById("feels-like").textContent = `${Math.round(feels)}°${isCelsius ? "C" : "F"}`;
-    document.getElementById("humidity").textContent = `${current.humidity}%`;
-    document.getElementById("wind").textContent = wind;
-    document.getElementById("wind-dir").textContent = current.wind_dir;
->>>>>>> fbcdbc2 (update UI and background)
-    document.getElementById("current-weather").classList.remove("hidden");
+    const elCityName = document.getElementById("city-name");
+    if(elCityName) elCityName.textContent = `${location.name}, ${location.country}`;
+    
+    const elCondition = document.getElementById("weather-condition");
+    if(elCondition) elCondition.textContent = current.condition.text;
+    
+    const elIcon = document.getElementById("weather-icon");
+    if(elIcon) elIcon.src = `https:${current.condition.icon}`;
+    
+    const elTemp = document.getElementById("temp");
+    if(elTemp) elTemp.textContent = `${Math.round(temp)}°${isCelsius ? "C" : "F"}`;
+    
+    const elFeels = document.getElementById("feels-like");
+    if(elFeels) elFeels.textContent = `${Math.round(feels)}°${isCelsius ? "C" : "F"}`;
+    
+    const elHumidity = document.getElementById("humidity");
+    if(elHumidity) elHumidity.textContent = `${current.humidity}%`;
+    
+    const elWind = document.getElementById("wind");
+    if(elWind) elWind.textContent = wind;
+    
+    const elWindDir = document.getElementById("wind-dir");
+    if(elWindDir) elWindDir.textContent = current.wind_dir;
+
+    const currentCard = document.getElementById("current-weather");
+    if(currentCard) currentCard.classList.remove("hidden");
 }
 
 function displayForecast(days) {
     const container = document.getElementById("forecast-cards");
+    if(!container) return;
     container.innerHTML = "";
-<<<<<<< HEAD
 
-      document.getElementById("temp").innerText =
-        Math.round(data.main.temp) + " °C";
-
-      document.getElementById("condition").innerText =
-        data.weather[0].description;
-
-    })
-    .catch(() => {
-      alert("City not found");
-=======
     const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
     days.forEach((day) => {
@@ -110,15 +114,64 @@ function displayForecast(days) {
             <div class="forecast-condition">${day.day.condition.text}</div>
         `;
         container.appendChild(card);
->>>>>>> fbcdbc2 (update UI and background)
     });
 
-    document.getElementById("forecast-section").classList.remove("hidden");
+    const forecastSection = document.getElementById("forecast-section");
+    if(forecastSection) forecastSection.classList.remove("hidden");
+}
+
+function updateWeather(data){
+    // This is a fallback function for geolocation
+    const { current, location } = data;
+    const temp = isCelsius ? current.temp_c : current.temp_f;
+    
+    const elName = document.getElementById("city-name") || document.getElementById("name");
+    if(elName) elName.textContent = location.name + ", " + location.country;
+    
+    const elTemp = document.getElementById("temp");
+    if(elTemp) elTemp.textContent = Math.round(temp) + " °C";
+    
+    const elCondition = document.getElementById("weather-condition") || document.getElementById("condition");
+    if(elCondition) elCondition.textContent = current.condition.text;
+    
+    const elIcon = document.getElementById("weather-icon") || document.getElementById("icon");
+    if(elIcon) elIcon.src = "https:" + current.condition.icon;
+}
+
+const cityInput = document.getElementById("city");
+if(cityInput) {
+    cityInput.addEventListener("keypress", function(e){
+        if(e.key === "Enter"){
+            getWeather();
+        }
+    });
+}
+
+if(navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position){
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${lat},${lon}&days=5`;
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                if(!data.error) {
+                    lastWeatherData = data;
+                    displayCurrentWeather(data);
+                    displayForecast(data.forecast.forecastday);
+                    setDynamicBackground(data);
+                }
+            });
+    }, function() {
+        console.warn("Geolocation denied or unavailable.");
+    });
 }
 
 function toggleUnit() {
     isCelsius = !isCelsius;
-    document.getElementById("unit-toggle").textContent = isCelsius ? "Switch to °F" : "Switch to °C";
+    const toggleBtn = document.getElementById("unit-toggle");
+    if(toggleBtn) toggleBtn.textContent = isCelsius ? "Switch to °F" : "Switch to °C";
 
     if (lastWeatherData) {
         displayCurrentWeather(lastWeatherData);
@@ -127,22 +180,27 @@ function toggleUnit() {
 }
 
 function showLoader(show) {
-    document.getElementById("loader").classList.toggle("hidden", !show);
+    const el = document.getElementById("loader");
+    if(el) el.classList.toggle("hidden", !show);
 }
 
 function showError(message) {
     const el = document.getElementById("error-msg");
+    if(!el) return;
     el.textContent = message;
     el.classList.remove("hidden");
 }
 
 function hideError() {
-    document.getElementById("error-msg").classList.add("hidden");
+    const el = document.getElementById("error-msg");
+    if(el) el.classList.add("hidden");
 }
 
 function hideResults() {
-    document.getElementById("current-weather").classList.add("hidden");
-    document.getElementById("forecast-section").classList.add("hidden");
+    const cw = document.getElementById("current-weather");
+    if(cw) cw.classList.add("hidden");
+    const fs = document.getElementById("forecast-section");
+    if(fs) fs.classList.add("hidden");
 }
 
 function getCityLocalHour(data) {
@@ -198,6 +256,8 @@ function setDynamicBackground(data) {
     const nextFile = getBackgroundFile(data);
     if (nextFile === currentBackgroundFile) return;
 
+    if (!bgVideos[0] || !bgVideos[1]) return;
+
     const currentVideo = bgVideos[activeVideoIndex];
     const nextVideo = bgVideos[1 - activeVideoIndex];
 
@@ -218,6 +278,7 @@ class RainDrop {
     }
 
     reset(initial = false) {
+        if(!canvasFX) return;
         this.x = Math.random() * canvasFX.width;
         this.y = initial ? Math.random() * canvasFX.height : -20;
         this.length = Math.random() * 20 + 10;
@@ -225,6 +286,7 @@ class RainDrop {
     }
 
     update() {
+        if(!canvasFX) return;
         this.y += this.speed;
         if (this.y > canvasFX.height) {
             this.reset();
@@ -232,6 +294,7 @@ class RainDrop {
     }
 
     draw() {
+        if(!ctxFX) return;
         ctxFX.strokeStyle = "rgba(255,255,255,0.35)";
         ctxFX.lineWidth = 1.2;
         ctxFX.beginPath();
@@ -242,10 +305,13 @@ class RainDrop {
 }
 
 function initRain() {
-    rainDrops = Array.from({ length: 170 }, () => new RainDrop());
+    if(canvasFX) {
+        rainDrops = Array.from({ length: 170 }, () => new RainDrop());
+    }
 }
 
 function animateEffects() {
+    if(!ctxFX || !canvasFX) return;
     ctxFX.clearRect(0, 0, canvasFX.width, canvasFX.height);
 
     if (isRaining) {
@@ -258,18 +324,23 @@ function animateEffects() {
 }
 
 function resizeEffects() {
+    if(!canvasFX) return;
     canvasFX.width = window.innerWidth;
     canvasFX.height = window.innerHeight;
 }
 
-resizeEffects();
-initRain();
-animateEffects();
-window.addEventListener("resize", resizeEffects);
+if(canvasFX) {
+    resizeEffects();
+    initRain();
+    animateEffects();
+    window.addEventListener("resize", resizeEffects);
+}
 
 bgVideos.forEach((video) => {
-    video.muted = true;
-    video.loop = true;
-    video.playsInline = true;
-    video.play().catch(() => {});
+    if(video) {
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+        video.play().catch(() => {});
+    }
 });

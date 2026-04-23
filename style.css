@@ -1,46 +1,83 @@
-<<<<<<< HEAD
-body{
-font-family: Arial, sans-serif;
-text-align:center;
-background: linear-gradient(135deg,#667eea,#764ba2);
-color:white;
-margin-top:80px;
-=======
- #weatherChart {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
->>>>>>> fbcdbc2 (update UI and background)
-}
-
-
 body {
     margin: 0;
-    font-family: 'Segoe UI';
-    background: linear-gradient(135deg, #1e3c72, #2a5298); /* BLUE */
-    height: 100vh;
+    font-family: "Segoe UI", sans-serif;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-
+    overflow: hidden;
+    color: white;
 }
-@keyframes gradientMove {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+
+#bgCanvas {
+    display: none;
+}
+
+#bgVideo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+}
+
+/* Dynamic video background layering */
+.video-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+    overflow: hidden;
+}
+
+.bg-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.9s ease-in-out;
+    will-change: opacity;
+}
+
+.bg-video.active {
+    opacity: 1;
+}
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.38));
+    backdrop-filter: blur(10px);
+    z-index: -2;
+}
+
+#effectsCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
 }
 
 /* Glass container */
 .container {
-    width: 90%;
-    max-width: 600px;
-    padding: 30px;
-    border-radius: 20px;
-    backdrop-filter: blur(15px);
-    background: rgba(255,255,255,0.1);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 5;
+    width: min(92vw, 760px);
+    padding: 28px;
+    border-radius: 18px;
+    background: rgba(20, 20, 30, 0.42);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.32);
     text-align: center;
-    color: white;
 }
 
 /* Title */
@@ -54,64 +91,7 @@ body {
     display: flex;
     gap: 10px;
     justify-content: center;
-}
-
-.search-box input {
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    width: 60%;
-}
-
-.search-box button {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 10px;
-    background: #ff6b6b;
-    color: white;
-    cursor: pointer;
-}
-
-/* Weather Card */
-.current-weather {
-    margin-top: 20px;
-    padding: 20px;
-    border-radius: 15px;
-    background: rgba(209, 198, 198, 0.15);
-}
-
-/* Forecast cards */
-.forecast-cards {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-    overflow-x: auto;
-}
-
-.forecast-card {
-    min-width: 80px;
-    padding: 10px;
-    border-radius: 10px;
-    background: rgba(138, 133, 133, 0.2);
-}
-.container {
-    width: 100%;
-    max-width: 700px;
-    text-align: center;
-}
-
-.search-box button{
-padding:10px 20px;
-margin-left:10px;
-border:none;
-border-radius:5px;
-background:#ff6b6b;
-color:white;
-cursor:pointer;
-}
-
-#weather-card{
-margin-top:40px;
+    flex-wrap: wrap;
 }
 
 .search-box input {
@@ -127,6 +107,10 @@ margin-top:40px;
 
 .search-box input::placeholder {
     color: #999;
+}
+
+.search-box input:focus {
+    box-shadow: 0 0 8px rgba(255,255,255,0.6);
 }
 
 .search-box button {
@@ -179,6 +163,7 @@ margin-top:40px;
     border-radius: 16px;
     padding: 28px 24px;
     color: #fff;
+    margin-top: 28px;
     margin-bottom: 28px;
 }
 
@@ -191,6 +176,7 @@ margin-top:40px;
 .current-main h2 {
     font-size: 24px;
     font-weight: 600;
+    margin: 0;
 }
 
 .condition {
@@ -314,6 +300,7 @@ margin-top:40px;
         font-size: 44px;
     }
 }
+
 #unit-toggle {
     background: #4dabf7;
     color: #fff;
@@ -325,169 +312,13 @@ margin-top:40px;
     cursor: pointer;
     transition: background 0.2s, transform 0.2s;
 }
+
 #unit-toggle:hover {
     background: #339af0;
 }
+
 #unit-toggle:active {
     transform: scale(0.95);
-}
-#bgCanvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background: #0f2027;
-}
-
-body {
-    margin: 0;
-    overflow: hidden;
-}
-#bgVideo {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -2;
-}
-
-.overlay {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.4);
-  z-index: -1;
-}
-
-.container {
-  position: relative;
-  z-index: 10;  
-}
-
-body {
-    margin: 0;
-    overflow: hidden;
-}
-.overlay {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        rgba(0,0,0,0.6),
-        rgba(0,0,0,0.8)
-    );
-    backdrop-filter: blur(10px);
-    z-index: -1;
-}
-/* container always on top */
-.container {
-    background: rgba(20, 20, 30, 0.6);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.1);
-}
-/* animation */
-@keyframes darkMove {
-    0% {
-        background: rgba(0, 0, 0, 0.4);
-    }
-    50% {
-        background: rgba(0, 0, 0, 0.6);
-    }
-    100% {
-        background: rgba(0, 0, 0, 0.4);
-    }
-}
-#effectsCanvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 2;
-    pointer-events: none;
-}
-
-/* Dynamic video background layering */
-.video-bg {
-    position: fixed;
-    inset: 0;
-    z-index: -3;
-    overflow: hidden;
-}
-
-.bg-video {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0;
-    transition: opacity 0.9s ease-in-out;
-    will-change: opacity;
-}
-
-.bg-video.active {
-    opacity: 1;
-}
-
-.overlay {
-    z-index: -1;
-}
-
-.container {
-    position: relative;
-    z-index: 10;
-}
-
-/* Final layout/layer overrides to avoid duplicate-rule conflicts */
-body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    font-family: "Segoe UI", sans-serif;
-}
-
-#bgCanvas {
-    display: none;
-}
-
-.video-bg {
-    z-index: -3;
-}
-
-.overlay {
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.38));
-}
-
-#effectsCanvas {
-    z-index: 1;
-}
-
-.container {
-    position: relative;
-    z-index: 5;
-    width: min(92vw, 760px);
-    padding: 28px;
-    border-radius: 18px;
-    color: #fff;
-    background: rgba(20, 20, 30, 0.42);
-    backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.32);
-}
-
-.search-box {
-    flex-wrap: wrap;
 }
 
 /* Front dashboard theme changes by city weather/time */
