@@ -5,7 +5,6 @@ let lastWeatherData = null;
 let activeVideoIndex = 0;
 let currentBackgroundFile = "videos/clear.mp4";
 
-<<<<<<< HEAD
 const bgVideos = [
     document.getElementById("bgVideoA"),
     document.getElementById("bgVideoB")
@@ -14,14 +13,8 @@ const bgVideos = [
 const canvasFX = document.getElementById("effectsCanvas");
 const ctxFX = canvasFX ? canvasFX.getContext("2d") : null;
 let rainDrops = [];
-=======
-let currentUnit = "C"; // default
-let currentData = null; // store latest weather
->>>>>>> upstream/main
 
-// 🔹 GET WEATHER FUNCTION
 function getWeather() {
-<<<<<<< HEAD
     const cityInput = document.getElementById("city");
     if (!cityInput) return;
     const city = cityInput.value.trim();
@@ -93,91 +86,8 @@ function displayCurrentWeather(data) {
     const elWindDir = document.getElementById("wind-dir");
     if(elWindDir) elWindDir.textContent = current.wind_dir;
 
-    const wrapperCard = document.getElementById("weather-wrapper");
-    if(wrapperCard) wrapperCard.classList.remove("hidden");
-
-    renderChart(data);
-}
-
-let weatherChartInstance = null;
-
-function renderChart(data) {
-    const ctx = document.getElementById('weatherChart');
-    if(!ctx) return;
-
-    if(weatherChartInstance) {
-        weatherChartInstance.destroy();
-    }
-
-    // Get hourly forecast for today and tomorrow to ensure we have next 24 hours
-    let hours = [];
-    if(data.forecast && data.forecast.forecastday) {
-        data.forecast.forecastday.forEach(day => {
-            hours = hours.concat(day.hour);
-        });
-    }
-
-    if(hours.length === 0) return;
-
-    // Find current time index to get the next 8 hours for a compact chart
-    const currentEpoch = data.location.localtime_epoch;
-    let startIndex = hours.findIndex(h => h.time_epoch >= currentEpoch);
-    if(startIndex === -1) startIndex = 0;
-    
-    const nextHours = hours.slice(startIndex, startIndex + 8);
-    
-    const labels = nextHours.map(h => {
-        const time = new Date(h.time_epoch * 1000);
-        return time.getHours() + ':00';
-    });
-
-    const temps = nextHours.map(h => isCelsius ? Math.round(h.temp_c) : Math.round(h.temp_f));
-
-    weatherChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: `Temp (${isCelsius ? '°C' : '°F'})`,
-                data: temps,
-                borderColor: '#4dabf7',
-                backgroundColor: 'rgba(77, 171, 247, 0.2)',
-                borderWidth: 2,
-                tension: 0.4,
-                fill: true,
-                pointRadius: 3,
-                pointBackgroundColor: '#fff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return context.parsed.y + (isCelsius ? '°C' : '°F');
-                        }
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    grid: { display: false, color: 'rgba(255,255,255,0.1)' },
-                    ticks: { color: 'rgba(255,255,255,0.8)', font: { size: 10 } }
-                },
-                y: {
-                    grid: { color: 'rgba(255,255,255,0.1)' },
-                    ticks: { color: 'rgba(255,255,255,0.8)', font: { size: 10 } },
-                    suggestedMin: Math.min(...temps) - 2,
-                    suggestedMax: Math.max(...temps) + 2
-                }
-            }
-        }
-    });
+    const currentCard = document.getElementById("current-weather");
+    if(currentCard) currentCard.classList.remove("hidden");
 }
 
 function displayForecast(days) {
@@ -235,70 +145,6 @@ if(cityInput) {
             getWeather();
         }
     });
-=======
-  const city = document.getElementById("city").value.trim();
-// fix: added default country handling
-  if (!city) {
-    alert("Please enter a city name");
-    return;
-  }
-
-  let query;
-
-  // ✅ Fix: default country handling
-  if (city.includes(",")) {
-    query = city;
-  } else {
-    query = city + ",IN";
-  }
-
-  const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${encodeURIComponent(query)}`;
-
-  fetch(url)
-    .then(res => res.json())
-    .then(data => {
-      if (data.error) {
-        alert(data.error.message);
-        return;
-      }
-      updateWeather(data);
-    })
-    .catch(() => {
-      alert("Failed to fetch weather data");
-    });
-}
-
-// 🔹 UPDATE UI FUNCTION
-function updateWeather(data) {
-  currentData = data;
-
-  document.getElementById("name").innerText =
-    data.location.name + ", " + data.location.country;
-
-  let temp;
-
-  if (currentUnit === "C") {
-    temp = Math.round(data.current.temp_c) + " °C";
-  } else {
-    temp = Math.round(data.current.temp_f) + " °F";
-  }
-
-  document.getElementById("temp").innerText = temp;
-
-  document.getElementById("condition").innerText =
-    data.current.condition.text;
-
-  document.getElementById("icon").src =
-    "https:" + data.current.condition.icon;
-}
-
-
-document.getElementById("city").addEventListener("keypress", function(e){
-
-if(e.key === "Enter"){
-getWeather();
-document.getElementById("suggestions-list").style.display = "none";
->>>>>>> upstream/main
 }
 
 if(navigator.geolocation) {
@@ -351,31 +197,10 @@ function hideError() {
 }
 
 function hideResults() {
-    const ww = document.getElementById("weather-wrapper");
-    if(ww) ww.classList.add("hidden");
+    const cw = document.getElementById("current-weather");
+    if(cw) cw.classList.add("hidden");
     const fs = document.getElementById("forecast-section");
     if(fs) fs.classList.add("hidden");
-}
-
-function timeToMinutes(timeStr) {
-    if (!timeStr) return 0;
-    const parts = timeStr.split(" ");
-    if (parts.length < 2) return 0;
-    const timeParts = parts[0].split(":");
-    let hours = parseInt(timeParts[0]);
-    const mins = parseInt(timeParts[1]);
-    if (parts[1].toUpperCase() === "PM" && hours !== 12) hours += 12;
-    if (parts[1].toUpperCase() === "AM" && hours === 12) hours = 0;
-    return hours * 60 + mins;
-}
-
-function getCityLocalMinutes(data) {
-    const localtime = data?.location?.localtime;
-    if (!localtime) return -1;
-    const parts = localtime.split(" ");
-    if (parts.length < 2) return -1;
-    const timeParts = parts[1].split(":");
-    return parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
 }
 
 function getCityLocalHour(data) {
@@ -392,38 +217,17 @@ function getBackgroundFile(data) {
     const localHour = getCityLocalHour(data);
     const isDayByLocalTime = localHour !== null ? localHour >= 6 && localHour < 18 : data.current.is_day === 1;
 
-    let isSunrise = false;
-    let isSunset = false;
-
-    if (data.forecast && data.forecast.forecastday && data.forecast.forecastday.length > 0) {
-        const astro = data.forecast.forecastday[0].astro;
-        if (astro && astro.sunrise && astro.sunset) {
-            const localMinutes = getCityLocalMinutes(data);
-            if (localMinutes !== -1) {
-                const sunriseMins = timeToMinutes(astro.sunrise);
-                const sunsetMins = timeToMinutes(astro.sunset);
-                
-                // Active sunrise/sunset effect for 45 mins before and after
-                if (Math.abs(localMinutes - sunriseMins) <= 45) isSunrise = true;
-                else if (Math.abs(localMinutes - sunsetMins) <= 45) isSunset = true;
-            }
-        }
-    }
-
-    if (condition.includes("rain") || condition.includes("drizzle") || condition.includes("thunder") || condition.includes("shower")) {
+    if (condition.includes("rain") || condition.includes("drizzle") || condition.includes("thunder")) {
         isRaining = true;
         return "videos/rain.mp4";
     }
 
     isRaining = false;
-    if (condition.includes("cloud") || condition.includes("overcast") || condition.includes("mist") || condition.includes("fog") || condition.includes("haze") || condition.includes("snow") || condition.includes("sleet") || condition.includes("blizzard") || condition.includes("ice") || condition.includes("pellet")) {
+    if (condition.includes("cloud") || condition.includes("overcast") || condition.includes("mist")) {
         return "videos/clouds.mp4";
     }
 
-    if (isSunrise) return "videos/sunrise.mp4";
-    if (isSunset) return "videos/sunset.mp4";
-
-    return isDayByLocalTime ? "videos/sunny.mp4" : "videos/night.mp4";
+    return isDayByLocalTime ? "videos/clear.mp4" : "videos/night.mp4";
 }
 
 function applyFrontTheme(data) {
@@ -433,39 +237,13 @@ function applyFrontTheme(data) {
 
     document.body.classList.remove("theme-day", "theme-night", "theme-rain", "theme-cloud");
 
-    if (condition.includes("rain") || condition.includes("drizzle") || condition.includes("thunder") || condition.includes("shower")) {
+    if (condition.includes("rain") || condition.includes("drizzle") || condition.includes("thunder")) {
         document.body.classList.add("theme-rain");
         return;
     }
 
-    if (condition.includes("cloud") || condition.includes("overcast") || condition.includes("mist") || condition.includes("fog") || condition.includes("haze") || condition.includes("snow") || condition.includes("sleet") || condition.includes("blizzard") || condition.includes("ice") || condition.includes("pellet")) {
+    if (condition.includes("cloud") || condition.includes("overcast") || condition.includes("mist")) {
         document.body.classList.add("theme-cloud");
-        return;
-    }
-
-    let isSunrise = false;
-    let isSunset = false;
-    
-    if (data.forecast && data.forecast.forecastday && data.forecast.forecastday.length > 0) {
-        const astro = data.forecast.forecastday[0].astro;
-        if (astro && astro.sunrise && astro.sunset) {
-            const localMinutes = getCityLocalMinutes(data);
-            if (localMinutes !== -1) {
-                const sunriseMins = timeToMinutes(astro.sunrise);
-                const sunsetMins = timeToMinutes(astro.sunset);
-                
-                if (Math.abs(localMinutes - sunriseMins) <= 45) isSunrise = true;
-                else if (Math.abs(localMinutes - sunsetMins) <= 45) isSunset = true;
-            }
-        }
-    }
-
-    if (isSunrise) {
-        document.body.classList.add("theme-day");
-        return;
-    }
-    if (isSunset) {
-        document.body.classList.add("theme-night");
         return;
     }
 
@@ -566,118 +344,3 @@ bgVideos.forEach((video) => {
         video.play().catch(() => {});
     }
 });
-<<<<<<< HEAD
-=======
-
-// 🏙️ AUTOCOMPLETE SUGGESTIONS LOGIC
-const cityInput = document.getElementById("city");
-const suggestionsList = document.getElementById("suggestions-list");
-let debounceTimer;
-
-cityInput.addEventListener("input", function() {
-    clearTimeout(debounceTimer);
-    const query = this.value.trim();
-    
-    if (query.length < 2) {
-        suggestionsList.style.display = "none";
-        suggestionsList.innerHTML = "";
-        return;
-    }
-    
-    debounceTimer = setTimeout(() => {
-        const url = `https://api.weatherapi.com/v1/search.json?key=${apiKey}&q=${encodeURIComponent(query)}`;
-        
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
-                suggestionsList.innerHTML = "";
-                
-                if (data.length > 0) {
-                    suggestionsList.style.display = "block";
-                    data.forEach(location => {
-                        const li = document.createElement("li");
-                        li.textContent = `${location.name}, ${location.country}`;
-                        li.addEventListener("click", () => {
-                            cityInput.value = location.name;
-                            suggestionsList.style.display = "none";
-                            getWeather();
-                        });
-                        suggestionsList.appendChild(li);
-                    });
-                } else {
-                    suggestionsList.style.display = "none";
-                }
-            })
-            .catch(() => {
-                suggestionsList.style.display = "none";
-            });
-    }, 300);
-});
-
-// Hide suggestions when clicking outside
-document.addEventListener("click", function(e) {
-    if (e.target !== cityInput && e.target !== suggestionsList) {
-        suggestionsList.style.display = "none";
-    }
-});
-
-
-
-// 🔹 ENTER KEY SEARCH
-document.getElementById("city").addEventListener("keypress", function (e) {
-  if (e.key === "Enter") {
-    getWeather();
-  }
-});
-
-// 🔹 GEOLOCATION
-navigator.geolocation.getCurrentPosition(showPosition);
-
-function showPosition(position) {
-  const lat = position.coords.latitude;
-  const lon = position.coords.longitude;
-
-  const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${lat},${lon}`;
-
-  fetch(url)
-    .then(res => res.json())
-    .then(data => {
-      updateWeather(data);
-    });
-}
-
-// 🔹 UNIT TOGGLE
-document.getElementById("unit-toggle").addEventListener("click", function () {
-  if (!currentData) return;
-
-  if (currentUnit === "C") {
-    currentUnit = "F";
-    this.innerText = "Switch to °C";
-  } else {
-    currentUnit = "C";
-    this.innerText = "Switch to °F";
-  }
-
-  updateWeather(currentData);
-});
-
-// 🌙 DARK MODE
-const themeBtn = document.getElementById("theme-toggle");
-
-if (localStorage.getItem("theme") === "dark") {
-  document.body.classList.add("dark-mode");
-  themeBtn.innerText = "☀️ Light Mode";
-}
-
-themeBtn.addEventListener("click", () => {
-  document.body.classList.toggle("dark-mode");
-
-  if (document.body.classList.contains("dark-mode")) {
-    themeBtn.innerText = "☀️ Light Mode";
-    localStorage.setItem("theme", "dark");
-  } else {
-    themeBtn.innerText = "🌙 Dark Mode";
-    localStorage.setItem("theme", "light");
-  }
-});
->>>>>>> upstream/main

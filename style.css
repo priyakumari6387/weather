@@ -1,28 +1,12 @@
-<<<<<<< HEAD
 body {
     margin: 0;
     font-family: "Segoe UI", sans-serif;
     min-height: 100vh;
     display: flex;
-    align-items: center;
     justify-content: center;
-    padding: 10px;
-    box-sizing: border-box;
-    overflow-y: auto;
-    overflow-x: hidden;
+    align-items: center;
+    overflow: hidden;
     color: white;
-=======
-body{
-
-font-family:Arial;
-text-align:center;
-background:linear-gradient(135deg,#667eea,#764ba2);
-
-color:white;
-
-margin-top:80px;
-
->>>>>>> upstream/main
 }
 
 #bgCanvas {
@@ -67,7 +51,8 @@ margin-top:80px;
     inset: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.3); /* Lighter overlay to let the video shine */
+    background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.38));
+    backdrop-filter: blur(10px);
     z-index: -2;
 }
 
@@ -85,9 +70,8 @@ margin-top:80px;
 .container {
     position: relative;
     z-index: 5;
-    margin: auto;
-    width: min(95vw, 720px);
-    padding: 20px;
+    width: min(92vw, 760px);
+    padding: 28px;
     border-radius: 18px;
     background: rgba(20, 20, 30, 0.42);
     backdrop-filter: blur(14px);
@@ -98,9 +82,8 @@ margin-top:80px;
 
 /* Title */
 .app-title {
-    font-size: 26px;
-    margin-bottom: 12px;
-    margin-top: 0;
+    font-size: 32px;
+    margin-bottom: 20px;
 }
 
 /* Search */
@@ -112,17 +95,16 @@ margin-top:80px;
 }
 
 .search-box input {
-    padding: 10px 14px;
-    width: 240px;
+    padding: 12px 16px;
+    width: 260px;
     border: none;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 15px;
     outline: none;
     background: rgba(255, 255, 255, 0.95);
     color: #333;
 }
 
-<<<<<<< HEAD
 .search-box input::placeholder {
     color: #999;
 }
@@ -132,12 +114,12 @@ margin-top:80px;
 }
 
 .search-box button {
-    padding: 10px 20px;
+    padding: 12px 24px;
     border: none;
     border-radius: 8px;
     background: #ff6b6b;
     color: #fff;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s;
@@ -175,49 +157,14 @@ margin-top:80px;
 }
 
 /* Current Weather Card */
-.weather-wrapper {
-    display: flex;
-    gap: 16px;
-    margin-top: 18px;
-    margin-bottom: 18px;
-    align-items: stretch;
-}
-
 .current-weather {
-    flex: 1;
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
     border-radius: 16px;
-    padding: 18px 20px;
+    padding: 28px 24px;
     color: #fff;
-    /* margins removed as they are handled by wrapper */
-}
-
-.chart-container {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    padding: 12px;
-    width: 200px;
-    aspect-ratio: 1; /* make it a square */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.chart-container canvas {
-    width: 100% !important;
-    height: 100% !important;
-}
-
-@media (max-width: 650px) {
-    .weather-wrapper {
-        flex-direction: column;
-    }
-    .chart-container {
-        width: 100%;
-        max-width: 300px;
-        margin: 0 auto;
-    }
+    margin-top: 28px;
+    margin-bottom: 28px;
 }
 
 .current-main {
@@ -227,7 +174,7 @@ margin-top:80px;
 }
 
 .current-main h2 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 600;
     margin: 0;
 }
@@ -239,32 +186,32 @@ margin-top:80px;
 }
 
 .weather-icon {
-    width: 64px;
-    height: 64px;
+    width: 80px;
+    height: 80px;
 }
 
 .current-temp {
-    font-size: 42px;
+    font-size: 56px;
     font-weight: 700;
-    margin: 8px 0 12px;
+    margin: 12px 0 20px;
 }
 
 .current-details {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: 12px;
 }
 
 .detail-item {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 10px;
-    padding: 10px;
+    padding: 12px;
     text-align: center;
 }
 
 .detail-label {
     display: block;
-    font-size: 11px;
+    font-size: 12px;
     opacity: 0.7;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -273,66 +220,66 @@ margin-top:80px;
 
 .detail-value {
     display: block;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
 }
 
 /* Forecast Section */
 .forecast-section {
-    margin-top: 4px;
+    margin-top: 8px;
 }
 
 .forecast-title {
     color: #fff;
-    font-size: 18px;
-    margin-bottom: 12px;
+    font-size: 20px;
+    margin-bottom: 16px;
     font-weight: 600;
 }
 
 .forecast-cards {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
+    gap: 10px;
 }
 
 .forecast-card {
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(10px);
     border-radius: 12px;
-    padding: 12px 6px;
+    padding: 16px 8px;
     color: #fff;
     text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .forecast-day {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     opacity: 0.85;
 }
 
 .forecast-card img {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 6px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
 }
 
 .forecast-high {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
 }
 
 .forecast-low {
-    font-size: 12px;
+    font-size: 13px;
     opacity: 0.8;
     margin-top: 2px;
 }
 
 .forecast-condition {
-    font-size: 10px;
+    font-size: 11px;
     opacity: 0.82;
-    margin-top: 4px;
+    margin-top: 6px;
 }
 
 /* Responsive */
@@ -358,9 +305,9 @@ margin-top:80px;
     background: #4dabf7;
     color: #fff;
     border: none;
-    border-radius: 6px;
-    padding: 8px 12px;
-    font-size: 12px;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s, transform 0.2s;
@@ -407,179 +354,3 @@ body.theme-cloud .container {
     background: rgba(45, 52, 66, 0.5);
     border-color: rgba(220, 228, 239, 0.2);
 }
-=======
-}
-
-
-
-
-/* 🌡️ UNIT TOGGLE BUTTON (CLEAN STYLE) */
-#unit-toggle {
-  margin-top: 20px;
-  padding: 10px 18px;
-  border-radius: 25px;
-  border: none;
-  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-  color: #333;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-/* HOVER EFFECT */
-#unit-toggle:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-/* ACTIVE CLICK EFFECT */
-#unit-toggle:active {
-  transform: scale(0.97);
-}
-
-
-/* 🌙 DARK MODE */
-
-/* Body background */
-body.dark-mode {
-  background: #000000;
-  color: #ffffff;
-}
-
-/* Input field */
-body.dark-mode input {
-  background: #111;
-  color: #fff;
-}
-
-/* Search button */
-body.dark-mode .search-box button {
-  background: #333;
-  color: #fff;
-}
-
-/* Toggle button style */
-#theme-toggle {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  padding: 8px 14px;
-  border-radius: 20px;
-  border: none;
-  background: #ffffff;
-  color: #000;
-  cursor: pointer;
-}
-
-/* Toggle button in dark mode */
-body.dark-mode #theme-toggle {
-  background: #222;
-  color: #fff;
-}
-
-/* 🌙 FORCE DARK MODE */
-body.dark-mode {
-  background: #000000 !important;
-  color: #ffffff !important;
-}
-
-/* 📱 MOBILE RESPONSIVENESS */
-@media (max-width: 600px) {
-  body {
-    margin-top: 40px;
-    padding: 0 15px;
-  }
-
-  .search-box input {
-    width: 100%;
-    margin-bottom: 10px;
-  }
-
-  .search-box button {
-    width: 100%;
-    margin-left: 0;
-  }
-
-  .search-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  #temp {
-    font-size: 28px;
-  }
-
-  #icon {
-    width: 60px;
-  }
-
-  #unit-toggle {
-    width: 100%;
-    margin-top: 15px;
-  }
-
-  #theme-toggle {
-    top: 10px;
-    right: 10px;
-    padding: 6px 10px;
-    font-size: 12px;
-  }
-}
-
-/* 🏙️ AUTOCOMPLETE SUGGESTIONS */
-.suggestions-list {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 250px;
-  background: rgba(255, 255, 255, 0.95);
-  color: #333;
-  list-style: none;
-  padding: 0;
-  margin: 5px 0 0 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  max-height: 200px;
-  overflow-y: auto;
-  text-align: left;
-  z-index: 10;
-  display: none;
-  backdrop-filter: blur(5px);
-}
-
-body.dark-mode .suggestions-list {
-  background: rgba(34, 34, 34, 0.95);
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(255,255,255,0.1);
-}
-
-.suggestions-list li {
-  padding: 10px 15px;
-  cursor: pointer;
-  border-bottom: 1px solid #eee;
-  transition: background 0.2s;
-}
-
-body.dark-mode .suggestions-list li {
-  border-bottom: 1px solid #444;
-}
-
-.suggestions-list li:last-child {
-  border-bottom: none;
-}
-
-.suggestions-list li:hover {
-  background: #f0f0f0;
-}
-
-body.dark-mode .suggestions-list li:hover {
-  background: #444;
-}
-
-@media (max-width: 600px) {
-  .suggestions-list {
-    width: 100%;
-  }
-}
->>>>>>> upstream/main
