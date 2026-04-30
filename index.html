@@ -1,11 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+<<<<<<< HEAD
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Weather Dashboard</title>
   <link rel="stylesheet" href="style.css" />
+=======
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Dashboard</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="style.css">
+
+>>>>>>> upstream/main
 </head>
 
 <body>
@@ -23,6 +33,7 @@
       <button onclick="getWeather()">Search</button>
     </div>
 
+<<<<<<< HEAD
     <!-- Weather Wrapper (Left: Current, Right: Chart) -->
     <div id="weather-wrapper" class="weather-wrapper hidden">
       <!-- Current Weather -->
@@ -71,6 +82,43 @@
     <div id="loader" class="loader hidden"></div>
     <div id="error-msg" class="error-msg hidden"></div>
   </div>
+=======
+<button id="theme-toggle">🌙 Dark Mode</button>
+
+<h1>Weather Dashboard</h1>
+
+<div class="search-box" style="position: relative; display: inline-block;">
+
+  <input
+    type="text"
+    id="city"
+    placeholder="Enter city name"
+    autocomplete="off"
+  />
+
+  <button onclick="getWeather()">Search</button>
+
+  <ul id="suggestions-list" class="suggestions-list"></ul>
+
+</div>
+
+<!-- ✅ Unit Toggle Button -->
+<button id="unit-toggle">Switch to °F</button>
+
+<div id="weather-card">
+
+  <h2 id="name">City</h2>
+
+  <p id="temp">-- °C</p>
+
+  <p id="condition"></p>
+
+  <img id="icon" alt="">
+
+</div>
+
+<script src="script.js"></script>
+>>>>>>> upstream/main
 
   <!-- Use config if present, or we use standard script.js logic -->
   <script src="config.js" onerror="console.warn('config.js not found, fallback to inline api key if present')"></script>
