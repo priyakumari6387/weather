@@ -86,8 +86,91 @@ function displayCurrentWeather(data) {
     const elWindDir = document.getElementById("wind-dir");
     if(elWindDir) elWindDir.textContent = current.wind_dir;
 
-    const currentCard = document.getElementById("current-weather");
-    if(currentCard) currentCard.classList.remove("hidden");
+    const wrapperCard = document.getElementById("weather-wrapper");
+    if(wrapperCard) wrapperCard.classList.remove("hidden");
+
+    renderChart(data);
+}
+
+let weatherChartInstance = null;
+
+function renderChart(data) {
+    const ctx = document.getElementById('weatherChart');
+    if(!ctx) return;
+
+    if(weatherChartInstance) {
+        weatherChartInstance.destroy();
+    }
+
+    // Get hourly forecast for today and tomorrow to ensure we have next 24 hours
+    let hours = [];
+    if(data.forecast && data.forecast.forecastday) {
+        data.forecast.forecastday.forEach(day => {
+            hours = hours.concat(day.hour);
+        });
+    }
+
+    if(hours.length === 0) return;
+
+    // Find current time index to get the next 8 hours for a compact chart
+    const currentEpoch = data.location.localtime_epoch;
+    let startIndex = hours.findIndex(h => h.time_epoch >= currentEpoch);
+    if(startIndex === -1) startIndex = 0;
+    
+    const nextHours = hours.slice(startIndex, startIndex + 8);
+    
+    const labels = nextHours.map(h => {
+        const time = new Date(h.time_epoch * 1000);
+        return time.getHours() + ':00';
+    });
+
+    const temps = nextHours.map(h => isCelsius ? Math.round(h.temp_c) : Math.round(h.temp_f));
+
+    weatherChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `Temp (${isCelsius ? '°C' : '°F'})`,
+                data: temps,
+                borderColor: '#4dabf7',
+                backgroundColor: 'rgba(77, 171, 247, 0.2)',
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 3,
+                pointBackgroundColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y + (isCelsius ? '°C' : '°F');
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false, color: 'rgba(255,255,255,0.1)' },
+                    ticks: { color: 'rgba(255,255,255,0.8)', font: { size: 10 } }
+                },
+                y: {
+                    grid: { color: 'rgba(255,255,255,0.1)' },
+                    ticks: { color: 'rgba(255,255,255,0.8)', font: { size: 10 } },
+                    suggestedMin: Math.min(...temps) - 2,
+                    suggestedMax: Math.max(...temps) + 2
+                }
+            }
+        }
+    });
 }
 
 function displayForecast(days) {
@@ -197,10 +280,31 @@ function hideError() {
 }
 
 function hideResults() {
-    const cw = document.getElementById("current-weather");
-    if(cw) cw.classList.add("hidden");
+    const ww = document.getElementById("weather-wrapper");
+    if(ww) ww.classList.add("hidden");
     const fs = document.getElementById("forecast-section");
     if(fs) fs.classList.add("hidden");
+}
+
+function timeToMinutes(timeStr) {
+    if (!timeStr) return 0;
+    const parts = timeStr.split(" ");
+    if (parts.length < 2) return 0;
+    const timeParts = parts[0].split(":");
+    let hours = parseInt(timeParts[0]);
+    const mins = parseInt(timeParts[1]);
+    if (parts[1].toUpperCase() === "PM" && hours !== 12) hours += 12;
+    if (parts[1].toUpperCase() === "AM" && hours === 12) hours = 0;
+    return hours * 60 + mins;
+}
+
+function getCityLocalMinutes(data) {
+    const localtime = data?.location?.localtime;
+    if (!localtime) return -1;
+    const parts = localtime.split(" ");
+    if (parts.length < 2) return -1;
+    const timeParts = parts[1].split(":");
+    return parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
 }
 
 function getCityLocalHour(data) {
@@ -217,17 +321,38 @@ function getBackgroundFile(data) {
     const localHour = getCityLocalHour(data);
     const isDayByLocalTime = localHour !== null ? localHour >= 6 && localHour < 18 : data.current.is_day === 1;
 
-    if (condition.includes("rain") || condition.includes("drizzle") || condition.includes("thunder")) {
+    let isSunrise = false;
+    let isSunset = false;
+
+    if (data.forecast && data.forecast.forecastday && data.forecast.forecastday.length > 0) {
+        const astro = data.forecast.forecastday[0].astro;
+        if (astro && astro.sunrise && astro.sunset) {
+            const localMinutes = getCityLocalMinutes(data);
+            if (localMinutes !== -1) {
+                const sunriseMins = timeToMinutes(astro.sunrise);
+                const sunsetMins = timeToMinutes(astro.sunset);
+                
+                // Active sunrise/sunset effect for 45 mins before and after
+                if (Math.abs(localMinutes - sunriseMins) <= 45) isSunrise = true;
+                else if (Math.abs(localMinutes - sunsetMins) <= 45) isSunset = true;
+            }
+        }
+    }
+
+    if (condition.includes("rain") || condition.includes("drizzle") || condition.includes("thunder") || condition.includes("shower")) {
         isRaining = true;
         return "videos/rain.mp4";
     }
 
     isRaining = false;
-    if (condition.includes("cloud") || condition.includes("overcast") || condition.includes("mist")) {
+    if (condition.includes("cloud") || condition.includes("overcast") || condition.includes("mist") || condition.includes("fog") || condition.includes("haze") || condition.includes("snow") || condition.includes("sleet") || condition.includes("blizzard") || condition.includes("ice") || condition.includes("pellet")) {
         return "videos/clouds.mp4";
     }
 
-    return isDayByLocalTime ? "videos/clear.mp4" : "videos/night.mp4";
+    if (isSunrise) return "videos/sunrise.mp4";
+    if (isSunset) return "videos/sunset.mp4";
+
+    return isDayByLocalTime ? "videos/sunny.mp4" : "videos/night.mp4";
 }
 
 function applyFrontTheme(data) {
@@ -237,13 +362,39 @@ function applyFrontTheme(data) {
 
     document.body.classList.remove("theme-day", "theme-night", "theme-rain", "theme-cloud");
 
-    if (condition.includes("rain") || condition.includes("drizzle") || condition.includes("thunder")) {
+    if (condition.includes("rain") || condition.includes("drizzle") || condition.includes("thunder") || condition.includes("shower")) {
         document.body.classList.add("theme-rain");
         return;
     }
 
-    if (condition.includes("cloud") || condition.includes("overcast") || condition.includes("mist")) {
+    if (condition.includes("cloud") || condition.includes("overcast") || condition.includes("mist") || condition.includes("fog") || condition.includes("haze") || condition.includes("snow") || condition.includes("sleet") || condition.includes("blizzard") || condition.includes("ice") || condition.includes("pellet")) {
         document.body.classList.add("theme-cloud");
+        return;
+    }
+
+    let isSunrise = false;
+    let isSunset = false;
+    
+    if (data.forecast && data.forecast.forecastday && data.forecast.forecastday.length > 0) {
+        const astro = data.forecast.forecastday[0].astro;
+        if (astro && astro.sunrise && astro.sunset) {
+            const localMinutes = getCityLocalMinutes(data);
+            if (localMinutes !== -1) {
+                const sunriseMins = timeToMinutes(astro.sunrise);
+                const sunsetMins = timeToMinutes(astro.sunset);
+                
+                if (Math.abs(localMinutes - sunriseMins) <= 45) isSunrise = true;
+                else if (Math.abs(localMinutes - sunsetMins) <= 45) isSunset = true;
+            }
+        }
+    }
+
+    if (isSunrise) {
+        document.body.classList.add("theme-day");
+        return;
+    }
+    if (isSunset) {
+        document.body.classList.add("theme-night");
         return;
     }
 
